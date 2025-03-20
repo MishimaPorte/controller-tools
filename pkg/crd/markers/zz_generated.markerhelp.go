@@ -154,6 +154,22 @@ func (ListType) Help() *markers.DefinitionHelp {
 	}
 }
 
+func (LocalTypeOverrideValue) Help() *markers.DefinitionHelp {
+	return &markers.DefinitionHelp{
+		Category: "CRD validation",
+		DetailedHelp: markers.DetailedHelp{
+			Summary: "LocalTypeOverride overrides the generated type for a field with the",
+			Details: "type referenced by name in argument.\n\nAny type is accepted.",
+		},
+		FieldHelp: map[string]markers.DetailedHelp{
+			"Value": {
+				Summary: "",
+				Details: "",
+			},
+		},
+	}
+}
+
 func (MapType) Help() *markers.DefinitionHelp {
 	return &markers.DefinitionHelp{
 		Category: "CRD processing",

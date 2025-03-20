@@ -31,6 +31,7 @@ const (
 	validationPrefix = "kubebuilder:validation:"
 
 	SchemalessName        = "kubebuilder:validation:Schemaless"
+	LocalTypeOverride     = "kubebuilder:validation:LocalTypeOverride"
 	ValidationItemsPrefix = validationPrefix + "items:"
 )
 
@@ -104,6 +105,9 @@ var FieldOnlyMarkers = []*definitionWithHelp{
 
 	must(markers.MakeDefinition(SchemalessName, markers.DescribesField, Schemaless{})).
 		WithHelp(Schemaless{}.Help()),
+
+	must(markers.MakeAnyTypeDefinition(LocalTypeOverride, markers.DescribesField, LocalTypeOverrideValue{})).
+		WithHelp(LocalTypeOverrideValue{}.Help()),
 }
 
 // ValidationIshMarkers are field-and-type markers that don't fall under the
@@ -311,6 +315,15 @@ type XIntOrString struct{}
 // Because this field disables all type checking, it is recommended
 // to be used only as a last resort.
 type Schemaless struct{}
+
+// +controllertools:marker:generateHelp:category="CRD validation"
+// LocalTypeOverride overrides the generated type for a field with the
+// type referenced by name in argument.
+//
+// Any type is accepted.
+type LocalTypeOverrideValue struct {
+	Value any
+}
 
 func hasNumericType(schema *apiext.JSONSchemaProps) bool {
 	return schema.Type == "integer" || schema.Type == "number"

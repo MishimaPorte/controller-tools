@@ -473,6 +473,11 @@ func structToSchema(ctx *schemaContext, structType *ast.StructType) *apiext.JSON
 		var propSchema *apiext.JSONSchemaProps
 		if field.Markers.Get(crdmarkers.SchemalessName) != nil {
 			propSchema = &apiext.JSONSchemaProps{}
+		} else if field.Markers.Get(crdmarkers.LocalTypeOverride) != nil {
+			var typename = string(field.Markers.Get(crdmarkers.LocalTypeOverride).(crdmarkers.LocalTypeOverrideValue).Value.(string))
+			ctx.requestSchema("", typename)
+			var link = TypeRefLink("", typename)
+			propSchema = &apiext.JSONSchemaProps{Ref: &link}
 		} else {
 			propSchema = typeToSchema(ctx.ForInfo(&markers.TypeInfo{}), field.RawField.Type)
 		}
