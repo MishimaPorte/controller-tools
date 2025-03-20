@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-
 	"sigs.k8s.io/controller-tools/pkg/markers"
 )
 
@@ -326,7 +325,7 @@ type LocalTypeOverrideValue struct {
 }
 
 func hasNumericType(schema *apiext.JSONSchemaProps) bool {
-	return schema.Type == "integer" || schema.Type == "number"
+	return schema.Type == string(Integer) || schema.Type == string(Number)
 }
 
 func hasTextualType(schema *apiext.JSONSchemaProps) bool {
@@ -349,6 +348,7 @@ type XValidation struct {
 	MessageExpression string `marker:"messageExpression,optional"`
 	Reason            string `marker:"reason,optional"`
 	FieldPath         string `marker:"fieldPath,optional"`
+	OptionalOldSelf   *bool  `marker:"optionalOldSelf,optional"`
 }
 
 func (m Maximum) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
@@ -356,7 +356,7 @@ func (m Maximum) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
 		return fmt.Errorf("must apply maximum to a numeric value, found %s", schema.Type)
 	}
 
-	if schema.Type == "integer" && !isIntegral(m.Value()) {
+	if schema.Type == string(Integer) && !isIntegral(m.Value()) {
 		return fmt.Errorf("cannot apply non-integral maximum validation (%v) to integer value", m.Value())
 	}
 
@@ -437,7 +437,7 @@ func (m Pattern) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
 }
 
 func (m MaxItems) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
-	if schema.Type != "array" {
+	if schema.Type != string(Array) {
 		return fmt.Errorf("must apply maxitem to an array")
 	}
 	val := int64(m)
@@ -446,7 +446,7 @@ func (m MaxItems) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
 }
 
 func (m MinItems) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
-	if schema.Type != "array" {
+	if schema.Type != string(Array) {
 		return fmt.Errorf("must apply minitems to an array")
 	}
 	val := int64(m)
@@ -617,6 +617,7 @@ func (m XValidation) ApplyToSchema(schema *apiext.JSONSchemaProps) error {
 		MessageExpression: m.MessageExpression,
 		Reason:            reason,
 		FieldPath:         m.FieldPath,
+		OptionalOldSelf:   m.OptionalOldSelf,
 	})
 	return nil
 }

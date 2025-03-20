@@ -340,7 +340,8 @@ type CronJobSpec struct {
 	AliasFromPackage corev1.IPFamilyPolicyType `json:"aliasFromPackage,omitempty"`
 
 	// This tests that string alias is handled correctly.
-	StringAlias StringAlias `json:"stringAlias,omitempty"`
+	StringAlias    StringAlias  `json:"stringAlias,omitempty"`
+	StringAliasPtr *StringAlias `json:"stringAliasPtr,omitempty"`
 
 	// This tests that validation on a string alias type is handled correctly.
 	// +kubebuilder:validation:MinLength=1
@@ -380,6 +381,10 @@ type CronJobSpec struct {
 
 	// This tests that embedded struct, which is an alias type, is handled correctly.
 	InlineAlias `json:",inline"`
+
+	// Test that we can add a field that can only be set to a non-default value on updates using XValidation OptionalOldSelf.
+	// +kubebuilder:validation:XValidation:rule="oldSelf.hasValue() || self == 0",message="must be set to 0 on creation. can be set to any value on an update.",optionalOldSelf=true
+	OnlyAllowSettingOnUpdate int32 `json:"onlyAllowSettingOnUpdate,omitempty"`
 }
 
 type InlineAlias = EmbeddedStruct

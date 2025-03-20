@@ -9,7 +9,7 @@ webhooks:
   - v1beta1
   clientConfig:
     service:
-      name: webhook-service
+      name: FOO
       namespace: system
       path: /mutate-testdata-kubebuilder-io-v1-cronjob
   failurePolicy: Fail
@@ -17,7 +17,7 @@ webhooks:
   name: default.cronjob.testdata.kubebuilder.io
   rules:
   - apiGroups:
-    - testdata.kubebuilder.io
+    - testdata.kubebuiler.io
     apiVersions:
     - v1
     operations:
@@ -27,6 +27,7 @@ webhooks:
     - cronjobs
   sideEffects: None
   timeoutSeconds: 10
+  reinvocationPolicy: IfNeeded
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
@@ -38,15 +39,16 @@ webhooks:
   - v1beta1
   clientConfig:
     service:
-      name: webhook-service
-      namespace: system
+      name: DEAD
+      namespace: BEEF
       path: /validate-testdata-kubebuilder-io-v1-cronjob
+      port: 1234
   failurePolicy: Fail
   matchPolicy: Equivalent
   name: validation.cronjob.testdata.kubebuilder.io
   rules:
   - apiGroups:
-    - testdata.kubebuilder.io
+    - testdata.kubebuiler.io
     apiVersions:
     - v1
     operations:
@@ -69,7 +71,7 @@ webhooks:
   name: validation.cronjob.testdata.kubebuilder.io
   rules:
   - apiGroups:
-    - testdata.kubebuilder.io
+    - testdata.kubebuiler.io
     apiVersions:
     - v1
     operations:
